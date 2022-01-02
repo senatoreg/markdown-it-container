@@ -32,7 +32,7 @@ module.exports = function container_plugin(md, name, options) {
 
   function container(state, startLine, endLine, silent) {
     var pos, nextLine, marker_count, markup, params, token,
-        old_parent, old_line_max,
+        old_parent, old_line_max, nested = 1,
         auto_closed = false,
         start = state.bMarks[startLine] + state.tShift[startLine],
         max = state.eMarks[startLine];
@@ -104,11 +104,13 @@ module.exports = function container_plugin(md, name, options) {
       pos -= (pos - start) % marker_len;
       pos = state.skipSpaces(pos);
 
-      if (pos < max) { continue; }
+      if (pos < max) { nested++; continue; }
 
       // found!
-      auto_closed = true;
-      break;
+      if (--nested === 0) {
+          auto_closed = true;
+          break;
+      }
     }
 
     old_parent = state.parentType;
