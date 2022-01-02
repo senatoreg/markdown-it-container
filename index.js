@@ -120,7 +120,7 @@ module.exports = function container_plugin(md, name, options) {
     // this will prevent lazy continuations from ever going past our end marker
     state.lineMax = nextLine;
 
-    token        = state.push('container_' + name + '_open', 'div', 1);
+    token        = state.push('container_' + name + '_open', name, 1);
     token.markup = markup;
     token.block  = true;
     token.info   = params;
@@ -128,7 +128,7 @@ module.exports = function container_plugin(md, name, options) {
 
     state.md.block.tokenize(state, startLine + 1, nextLine);
 
-    token        = state.push('container_' + name + '_close', 'div', -1);
+    token        = state.push('container_' + name + '_close', name, -1);
     token.markup = state.src.slice(start, pos);
     token.block  = true;
 
