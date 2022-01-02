@@ -55,7 +55,7 @@ module.exports = function container_plugin(md, name, options) {
     pos -= (pos - start) % marker_len;
 
     markup = state.src.slice(start, pos);
-    params = state.src.slice(pos, max);
+    params = state.src.slice(pos, max).trim();
     if (!validate(params, markup)) { return false; }
 
     // Since start is found, we can report success here in validation mode
