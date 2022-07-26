@@ -108,8 +108,8 @@ module.exports = function container_plugin(md, name, options) {
 
       // found!
       if (--nested === 0) {
-          auto_closed = true;
-          break;
+        auto_closed = true;
+        break;
       }
     }
 
