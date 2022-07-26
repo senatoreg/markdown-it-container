@@ -32,7 +32,7 @@ module.exports = function container_plugin(md, name, options) {
 
   function container(state, startLine, endLine, silent) {
     var pos, nextLine, marker_count, markup, params, token,
-        old_parent, old_line_max, nested = 1,
+        old_parent, old_line_max, level = 0,
         auto_closed = false,
         start = state.bMarks[startLine] + state.tShift[startLine],
         max = state.eMarks[startLine];
@@ -55,7 +55,7 @@ module.exports = function container_plugin(md, name, options) {
     pos -= (pos - start) % marker_len;
 
     markup = state.src.slice(start, pos);
-    params = state.src.slice(pos, max).trim();
+    params = state.src.slice(pos, max);
     if (!validate(params, markup)) { return false; }
 
     // Since start is found, we can report success here in validation mode
@@ -104,10 +104,10 @@ module.exports = function container_plugin(md, name, options) {
       pos -= (pos - start) % marker_len;
       pos = state.skipSpaces(pos);
 
-      if (pos < max) { nested++; continue; }
+      if (pos < max) { level++; continue; }
 
       // found!
-      if (--nested === 0) {
+      if (level-- === 0) {
         auto_closed = true;
         break;
       }
@@ -120,7 +120,7 @@ module.exports = function container_plugin(md, name, options) {
     // this will prevent lazy continuations from ever going past our end marker
     state.lineMax = nextLine;
 
-    token        = state.push('container_' + name + '_open', name, 1);
+    token        = state.push('container_' + name + '_open', 'div', 1);
     token.markup = markup;
     token.block  = true;
     token.info   = params;
@@ -128,7 +128,7 @@ module.exports = function container_plugin(md, name, options) {
 
     state.md.block.tokenize(state, startLine + 1, nextLine);
 
-    token        = state.push('container_' + name + '_close', name, -1);
+    token        = state.push('container_' + name + '_close', 'div', -1);
     token.markup = state.src.slice(start, pos);
     token.block  = true;
 
